@@ -54,19 +54,19 @@ pipeline {
                 )
             }
         }
-        stage('SmokeTest'){
-            when{
-              branch 'master'
+        stage('SmokeTest') {
+            when {
+                branch 'master'
             }
-            steps{
-                script{
+            steps {
+                script {
                     sleep (time: 5)
-                    def response = httpRequest(
-                        url: "http://$KUBE_MASTER_IP:8001/",
+                    def response = httpRequest (
+                        url: "http://$KUBE_MASTER_IP:8081/",
                         timeout: 30
                     )
-                    if(response.status != 200){
-                        error("Smoke test against canary deployment failed.")   
+                    if (response.status != 200) {
+                        error("Smoke test against canary deployment failed.")
                     }
                 }
             }
@@ -79,23 +79,18 @@ pipeline {
                 milestone(1)
                 kubernetesDeploy(
                     kubeconfigId: 'kubeconfig',
-                    configs: 'train-schedule-kube-canary.yml',
-                    enableConfigSubstitution: true
-                )
-                kubernetesDeploy(
-                    kubeconfigId: 'kubeconfig',
                     configs: 'train-schedule-kube.yml',
                     enableConfigSubstitution: true
                 )
             }
         }
     }
-    post{
+    post {
         cleanup {
-            kubernetesDeploy(
-                    kubeconfigId: 'kubeconfig',
-                    configs: 'train-schedule-kube-canary.yml',
-                    enableConfigSubstitution: true
+            kubernetesDeploy (
+                kubeconfigId: 'kubeconfig',
+                configs: 'train-schedule-kube-canary.yml',
+                enableConfigSubstitution: true
             )
         }
     }
