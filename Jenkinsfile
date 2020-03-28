@@ -56,7 +56,7 @@ pipeline {
         }
         stage('SmokeTest'){
             when{
-                branch 'master'
+              branch 'master'
             }
             steps{
                 script{
@@ -69,6 +69,7 @@ pipeline {
                     }
                 }
             }
+        }
         stage('DeployToProduction') {
             when {
                 branch 'master'
